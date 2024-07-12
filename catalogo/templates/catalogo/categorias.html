@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categorías de Libros</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'catalogo/css/style.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 70px;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .container {
+            margin-top: 80px;
+        }
+        .category {
+            margin-bottom: 20px;
+        }
+        .book {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: row; /* Mostrar los libros horizontalmente */
+            align-items: center; /* Centrar verticalmente */
+        }
+        .book-image {
+            width: 100px;
+            height: 150px;
+            margin-right: 20px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'catalogo/img/logo.jpeg'%}" width="30" height="30" class="d-inline-block align-top" alt="Logo">
+            Biblioteca Online
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'libros' %}">Libros</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'autores' %}">Autores</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'categorias' %}">Categorías</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="my-4">Categorías de Libros</h1>
+        <div class="row">
+            <div class="col-md-3">
+                <h3>Categorías</h3>
+                <div class="list-group">
+                    {% for categoria in categorias %}
+                    <a href="?categoria={{ categoria }}" class="list-group-item list-group-item-action {% if categoria == selected_category %}active{% endif %} category">{{ categoria }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h3>{{ selected_category }}</h3>
+                {% for book in books %}
+                <div class="book">
+                    {% if book.imageLinks %}
+                    <img class="book-image" src="{{ book.imageLinks.thumbnail }}" alt="Portada del libro">
+                    {% else %}
+                    <div class="book-image"></div>
+                    {% endif %}
+                    <div class="book-info">
+                        <h5>{{ book.title }}</h5>
+                        <p><strong>Autores:</strong> {{ book.authors|join:", " }}</p>
+                        <p><strong>Publicación:</strong> {{ book.publishedDate }}</p>
+                        <p>{{ book.description }}</p>
+                        <a href="{{ book.infoLink }}" class="btn btn-primary" target="_blank">Ver más</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+body {
+    padding-top: 0px;
+}
+
+.carousel-item img {
+    height: 500px;
+}
+
+.jumbotron {
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+.navbar-nav .nav-link {
+    transition: transform 0.3s ease-out;
+}
+
+.navbar-nav .nav-link:hover {
+    transform: scale(1.1);
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Libros - Biblioteca</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'catalogo/css/style.css' %}">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'catalogo/img/logo.jpeg'%}" width="30" height="30" class="d-inline-block align-top" alt="Logo">
+            Biblioteca Online
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'libros' %}">Libros</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'autores' %}">Autores</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'categorias' %}">Categorías</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="my-4">Lista de Libros</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Año de Publicación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="books-table-body">
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.volumeInfo.title }}</td>
+                    <td>{{ book.volumeInfo.authors|join:", " }}</td>
+                    <td>{{ book.volumeInfo.publishedDate }}</td>
+                    <td><a href="{{ book.volumeInfo.infoLink }}" class="btn btn-primary" target="_blank">Ver más</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center">
+            <button id="load-more" class="btn btn-primary">Ver más libros</button>
+        </div>
+    </div>
+    <script>
+        let startIndex = 10;
+        $('#load-more').click(function() {
+            $.ajax({
+                url: "{% url 'libros' %}",
+                data: {
+                    'start': startIndex
+                },
+                dataType: 'json',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(data) {
+                    let books = data.books;
+                    books.forEach(book => {
+                        let title = book.volumeInfo.title || 'N/A';
+                        let authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(", ") : 'N/A';
+                        let publishedDate = book.volumeInfo.publishedDate || 'N/A';
+                        let infoLink = book.volumeInfo.infoLink || '#';
+
+                        let newRow = `
+                            <tr>
+                                <td>${title}</td>
+                                <td>${authors}</td>
+                                <td>${publishedDate}</td>
+                                <td><a href="${infoLink}" class="btn btn-primary" target="_blank">Ver más</a></td>
+                            </tr>
+                        `;
+                        $('#books-table-body').append(newRow);
+                    });
+                    startIndex += 10;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
